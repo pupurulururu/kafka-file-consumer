@@ -1,0 +1,87 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	deployJarName = "consumer.jar"
+	pkgDir="nlog-consumer"
+}
+
+dependencies {
+	implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
+	implementation 'org.apache.commons:commons-text:1.9'
+	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'commons-collections:commons-collections:3.2.1'
+
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.5'
+
+	implementation group: 'org.jooq', name: 'jooq', version: '3.16.8'
+	implementation group: 'org.jooq', name: 'jooq-meta', version: '3.16.8'
+	implementation group: 'org.jooq', name: 'jooq-codegen', version: '3.16.8'
+
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.19.0'
+
+
+	implementation ('org.springframework.boot:spring-boot-starter'){
+		exclude group: 'ch.qos.logback', module: 'logback-classic'
+		exclude group: 'ch.qos.logback', module: 'logback-core'
+	}
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+configurations {
+	all {
+		exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+task cleanDir(type: Delete) {
+	delete "$rootDir/package/$pkgDir"
+}
+
+task copyTemplate(type: Copy) {
+	from "$buildDir/resources/main/log4j2.xml"
+
+	into "$rootDir/package/template/$pkgDir/"
+}
+
+task copyJar(type: Copy) {
+	from bootJar.getArchiveFile().get()
+
+	rename bootJar.getArchiveFileName().get(), deployJarName
+
+	into "$rootDir/package/$pkgDir/bin/"
+}
+
+task copyFiles(type: Copy) {
+	dependsOn copyTemplate
+	dependsOn copyJar
+}
+
+task pkg(){
+	dependsOn cleanDir
+	mkdir("$rootDir/package/$pkgDir/bin")
+	mkdir("$rootDir/package/template/$pkgDir")
+	dependsOn copyFiles
+}

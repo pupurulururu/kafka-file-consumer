@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+	<Properties>
+		<Property name="logDir">${sys:WORK_LOG:-build/classes/logs}</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="LogToConsole" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+		</Console>
+		<RollingFile name="LogToRollingFile" fileName="${logDir}/console.log"
+			filePattern="${logDir}/console.%d{yyyyMMdd}.log">
+			<PatternLayout>
+				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<!-- avoid duplicated logs with additivity=false -->
+		<Logger name="com.nethru.wisecollector" level="debug" additivity="false">
+			<AppenderRef ref="LogToRollingFile"/>
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="LogToConsole"/>
+			<AppenderRef ref="LogToRollingFile"/>
+		</Root>
+	</Loggers>
+</Configuration>
