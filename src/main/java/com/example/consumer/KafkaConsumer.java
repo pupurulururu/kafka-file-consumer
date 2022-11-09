@@ -64,6 +64,6 @@ public class KafkaConsumer {
 
         stopWatch.stop();
 
-        LOGGER.info("pool size : {}, 소요시간 : {}/ms", records.size(), stopWatch.getLastTaskTimeMillis());
+        LOGGER.info("pool size : {}, 소요시간 : {}/ns", records.size(), stopWatch.getLastTaskTimeNanos());
     }
 }
