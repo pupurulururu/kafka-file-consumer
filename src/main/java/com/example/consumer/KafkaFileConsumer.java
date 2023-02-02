@@ -4,11 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -17,10 +15,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-@Component
-public class KafkaConsumer {
+public class KafkaFileConsumer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaFileConsumer.class);
 
     @Value("${fileName:output.txt}")
     private String fileName;
@@ -29,7 +26,6 @@ public class KafkaConsumer {
 
     private StopWatch stopWatch;
 
-    @PostConstruct
     public void initialize() throws Exception {
         LOGGER.info("FileConsumer initialized");
         if (fileName == null) {

@@ -12,6 +12,14 @@ repositories {
 	mavenCentral()
 }
 
+repositories {
+	mavenCentral()
+	maven{
+		name "Sonatype OSSRH"
+		url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+	}
+}
+
 ext {
 	deployJarName = "consumer.jar"
 	pkgDir="nlog-consumer"
@@ -28,6 +36,9 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.5'
+
+	implementation 'com.clickhouse:clickhouse-jdbc:0.4.0-SNAPSHOT:all'
+	implementation 'com.clickhouse:clickhouse-http-client:0.4.0-SNAPSHOT'
 
 	implementation group: 'org.jooq', name: 'jooq', version: '3.16.8'
 	implementation group: 'org.jooq', name: 'jooq-meta', version: '3.16.8'
